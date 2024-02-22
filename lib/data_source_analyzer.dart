@@ -11,16 +11,11 @@ import 'models/model_preload_result.dart';
 import 'models/remote_hosting_settings.dart';
 
 class DataSourseAnalyzer {
-  final JsVMService _jsVMService;
+  final JsVMService jsVMService;
 
-  DataSourseAnalyzer._({required JsVMService jsVMService})
-      : _jsVMService = jsVMService;
+  DataSourseAnalyzer({required this.jsVMService});
 
-  factory DataSourseAnalyzer() {
-    return DataSourseAnalyzer._(
-      jsVMService: getJsVM(),
-    );
-  }
+  DataSourseAnalyzer.defaultInstance() : this(jsVMService: getJsVM());
 
   Future<dynamic> callAiModel({
     required String type,
@@ -36,7 +31,7 @@ class DataSourseAnalyzer {
         '''window.callAiModel("$type","$model", $additionalPipelineParams, "$request", $additionalModelParams, 
         {remoteHost: "${remoteHostSettings.remoteHost}", 
         remotePathTemplate: "${remoteHostSettings.remotePathTemplate}"})''';
-    final output = await _jsVMService.callJSAsync(function);
+    final output = await jsVMService.callJSAsync(function);
     final decodedOutput = jsonDecode(output);
     if (decodedOutput is Map && decodedOutput['error'] != null) {
       throw Exception(decodedOutput['error']);
@@ -44,6 +39,14 @@ class DataSourseAnalyzer {
       return output;
     }
   }
+}
+
+class DataSourseAnalyzerService {
+  final JsVMService jsVMService;
+
+  DataSourseAnalyzerService({required this.jsVMService});
+
+  DataSourseAnalyzerService.defaultInstance() : this(jsVMService: getJsVM());
 
   Future<ModelPreLoadResult> loadModelToCache({
     required String type,
@@ -60,7 +63,7 @@ class DataSourseAnalyzer {
         """window.loadModelToCache("$type","$model", $additionalPipelineParams,
         {remoteHost: "${remoteHostSettings.remoteHost}",
         remotePathTemplate: "${remoteHostSettings.remotePathTemplate}"})""";
-    final output = await _jsVMService.callJSAsync(function);
+    final output = await jsVMService.callJSAsync(function);
     final decodedOutput = jsonDecode(output);
     if (decodedOutput is Map && decodedOutput["success"] == true) {
       return ModelPreLoadResult(success: true);

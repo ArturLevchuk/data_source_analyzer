@@ -38,7 +38,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dataSourseAnalyzer = DataSourseAnalyzer();
+    final dataSourseAnalyzer = DataSourseAnalyzer.defaultInstance();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
