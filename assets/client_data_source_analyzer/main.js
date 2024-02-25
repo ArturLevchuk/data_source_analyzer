@@ -41,6 +41,7 @@ async function callAiModel(
 async function loadModelToCache(
   type,
   model,
+  quantized,
   additionalPipelineParams,
   remoteHostSettings) {
     if (!type) {
@@ -56,8 +57,9 @@ async function loadModelToCache(
   env.allowRemoteModels = true;
   env.remoteHost = remoteHostSettings["remoteHost"];
   env.remotePathTemplate = remoteHostSettings["remotePathTemplate"];
+  const pipelineParams = { ...(additionalPipelineParams ?? {}), quantized: quantized };
   try {
-    await pipeline(type, model, additionalPipelineParams ?? {});
+    await pipeline(type, model, pipelineParams);
     return JSON.stringify({
       success: true,
     });

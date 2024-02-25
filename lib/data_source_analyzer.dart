@@ -51,8 +51,8 @@ class DataSourseAnalyzerService {
   Future<ModelPreLoadResult> loadModelToCache({
     required String type,
     required String model,
+    bool quantized = true,
     String additionalPipelineParams = """{
-      quantized: true,
       progress_callback: (p) => console.log(JSON.stringify(p)),
     }""",
     RemoteHostSettings remoteHostSettings = const RemoteHostSettings(
@@ -60,7 +60,7 @@ class DataSourseAnalyzerService {
         remotePathTemplate: '{model}/resolve/{revision}/'),
   }) async {
     final function =
-        """window.loadModelToCache("$type","$model", $additionalPipelineParams,
+        """window.loadModelToCache("$type","$model", $quantized, $additionalPipelineParams,
         {remoteHost: "${remoteHostSettings.remoteHost}",
         remotePathTemplate: "${remoteHostSettings.remotePathTemplate}"})""";
     final output = await jsVMService.callJSAsync(function);
